@@ -3,6 +3,7 @@ package com.api.vehiclerental.services;
 import com.api.vehiclerental.dtos.VehicleDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface VehicleService {
 
