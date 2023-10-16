@@ -33,15 +33,23 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public VehicleDto getVehicleByMake(String make) {
-        Vehicle vehicle = vehicleRepository.findByMake(make).orElseThrow(() -> new RuntimeException("Vehicle with given make not found!"));
-        return convertVehicleToVehicleDto(vehicle);
+    public List<VehicleDto> getAllVehiclesByMake(String make) {
+        List<Vehicle> vehicles = vehicleRepository.findByMake(make).orElseThrow(() -> new RuntimeException("Vehicle with given make not found!"));
+        List<VehicleDto> vehicleDtos = new ArrayList<>();
+        for(Vehicle v : vehicles) {
+            vehicleDtos.add(convertVehicleToVehicleDto(v));
+        }
+        return vehicleDtos;
     }
 
     @Override
-    public VehicleDto getVehicleByMakeAndModel(String make, String model) {
-        Vehicle vehicle = vehicleRepository.findByMakeAndModel(make, model).orElseThrow(() -> new RuntimeException("Vehicle with given make and model not found!"));
-        return convertVehicleToVehicleDto(vehicle);
+    public List<VehicleDto> getAllVehiclesByMakeAndModel(String make, String model) {
+        List<Vehicle> vehicles = vehicleRepository.findByMakeAndModel(make, model).orElseThrow(() -> new RuntimeException("Vehicle with given make and model not found!"));
+        List<VehicleDto> vehicleDtos = new ArrayList<>();
+        for(Vehicle v : vehicles) {
+            vehicleDtos.add(convertVehicleToVehicleDto(v));
+        }
+        return vehicleDtos;
     }
 
     @Override
