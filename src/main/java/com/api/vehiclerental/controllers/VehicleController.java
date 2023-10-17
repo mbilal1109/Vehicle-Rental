@@ -1,5 +1,6 @@
 package com.api.vehiclerental.controllers;
 
+import com.api.vehiclerental.exceptions.ResponseMessage;
 import com.api.vehiclerental.dtos.VehicleDto;
 import com.api.vehiclerental.services.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,16 @@ public class VehicleController {
     }
 
     @DeleteMapping("/{vehicleId}")
-    public ResponseEntity<String> deleteVehicle(@PathVariable int vehicleId) {
+    public ResponseEntity<ResponseMessage> deleteVehicle(@PathVariable int vehicleId) {
         vehicleService.deleteVehicle(vehicleId);
-        return new ResponseEntity<>("Vehicle Deleted Successfully", HttpStatus.OK);
+
+        ResponseMessage response = ResponseMessage.builder()
+                .message("Vehicle Deleted Successfully")
+                .success(true)
+                .status(HttpStatus.OK)
+                .cause(null)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -1,6 +1,8 @@
 package com.api.vehiclerental.services.impl;
 
+import com.api.vehiclerental.common.VehicleRentalConstant;
 import com.api.vehiclerental.dtos.VehicleDto;
+import com.api.vehiclerental.exceptions.VehicleRentalNotFoundException;
 import com.api.vehiclerental.models.Vehicle;
 import com.api.vehiclerental.repositories.VehicleRepository;
 import com.api.vehiclerental.services.VehicleService;
@@ -28,13 +30,18 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public VehicleDto getVehicleById(int vehicleId) {
-        Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(() -> new RuntimeException("Vehicle with given ID not found!"));
+        Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(
+                () -> new VehicleRentalNotFoundException(VehicleRentalConstant.VEHICLE_WITH_ID_NOT_FOUND));
         return convertVehicleToVehicleDto(vehicle);
     }
 
     @Override
     public List<VehicleDto> getAllVehiclesByMake(String make) {
-        List<Vehicle> vehicles = vehicleRepository.findByMake(make).orElseThrow(() -> new RuntimeException("Vehicle with given make not found!"));
+        List<Vehicle> vehicles = vehicleRepository.findAllByMake(make).get();
+
+        if(vehicles.isEmpty()) {
+            throw new VehicleRentalNotFoundException(VehicleRentalConstant.VEHICLE_WITH_MAKE_NOT_FOUND);
+        }
         List<VehicleDto> vehicleDtos = new ArrayList<>();
         for(Vehicle v : vehicles) {
             vehicleDtos.add(convertVehicleToVehicleDto(v));
@@ -44,7 +51,11 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleDto> getAllVehiclesByMakeAndModel(String make, String model) {
-        List<Vehicle> vehicles = vehicleRepository.findByMakeAndModel(make, model).orElseThrow(() -> new RuntimeException("Vehicle with given make and model not found!"));
+        List<Vehicle> vehicles = vehicleRepository.findAllByMakeAndModel(make, model).get();
+
+        if(vehicles.isEmpty()) {
+            throw new VehicleRentalNotFoundException(VehicleRentalConstant.VEHICLE_WITH_MAKE_MODEL_NOT_FOUND);
+        }
         List<VehicleDto> vehicleDtos = new ArrayList<>();
         for(Vehicle v : vehicles) {
             vehicleDtos.add(convertVehicleToVehicleDto(v));
@@ -64,7 +75,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public VehicleDto updateVehicle(int vehicleId, VehicleDto vehicleDto) {
-        Vehicle vehicleToBeUpdated = vehicleRepository.findById(vehicleId).orElseThrow(() -> new RuntimeException("Vehicle with given ID not found!"));
+        Vehicle vehicleToBeUpdated = vehicleRepository.findById(vehicleId).orElseThrow(
+                () -> new VehicleRentalNotFoundException(VehicleRentalConstant.VEHICLE_WITH_ID_NOT_FOUND));
 
         vehicleToBeUpdated.setMake(vehicleDto.getMake());
         vehicleToBeUpdated.setModel(vehicleDto.getModel());
@@ -77,11 +89,9 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public void deleteVehicle(int vehicleId) {
-        try {
-            vehicleRepository.deleteById(vehicleId);
-        } catch (Exception e) {
-            throw new RuntimeException("Vehicle with given ID not found!" + e);
-        }
+        Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(
+                () -> new VehicleRentalNotFoundException(VehicleRentalConstant.VEHICLE_WITH_ID_NOT_FOUND));
+        vehicleRepository.delete(vehicle);
     }
 
     private Vehicle convertVehicleDtoToVehicle(VehicleDto vehicleDto) {
