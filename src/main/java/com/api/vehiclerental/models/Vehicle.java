@@ -28,4 +28,7 @@ public class Vehicle {
 
     @Column(name = "vehicle_year")
     private String year;
+
+    @Column(name = "vehicle_image")
+    private String image;
 }
