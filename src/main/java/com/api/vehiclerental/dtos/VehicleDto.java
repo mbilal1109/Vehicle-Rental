@@ -14,4 +14,5 @@ public class VehicleDto {
     private String model;
     private String trim;
     private String year;
+    private String image;
 }
