@@ -23,7 +23,7 @@ public class VehicleServiceImpl implements VehicleService {
     private VehicleRepository vehicleRepository;
 
     @Override
-    public VehicleDto createUser(VehicleDto vehicleDto) {
+    public VehicleDto createVehicle(VehicleDto vehicleDto) {
         Vehicle vehicle = vehicleRepository.save(convertVehicleDtoToVehicle(vehicleDto));
         return convertVehicleToVehicleDto(vehicle);
     }
